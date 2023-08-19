@@ -24,7 +24,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Networking;
@@ -52,7 +54,7 @@ namespace NetworkHelper
         /// <summary>
         /// The service type of the DNS-SD registration.
         /// </summary>
-        private const string SERVICE_TYPE = "_p2phelper";
+        private const string SERVICE_TYPE = "_http";
 
         /// <summary>
         /// The protocol ID that identifies DNS-SD.
@@ -144,6 +146,7 @@ namespace NetworkHelper
         /// </summary>
         public override async Task<bool> StartListeningAsync()
         {
+            await FindAllDevicesAsync();
             bool status = false;
 
             if (_watcher == null)
@@ -162,6 +165,20 @@ namespace NetworkHelper
 
             await Task.CompletedTask;
             return status;
+        }
+
+        public async Task FindAllDevicesAsync()
+        {
+            var query = "System.Devices.AepService.ProtocolId:={4526e8c1-8aac-4153-9b16-55e86ada0e54} AND System.Devices.Dnssd.Domain:=\"local\" AND System.Devices.Dnssd.ServiceName:=\"_ipp._tcp\"";
+            DeviceInformationCollection devices = await DeviceInformation.FindAllAsync(query, _propertyKeys, DeviceInformationKind.AssociationEndpointService);
+
+            int count = 0;
+            var devicesList = devices.ToList();
+            foreach (var device in devices)
+            {
+                count++;
+            }
+            Debug.WriteLine("found {0} devices", count);
         }
 
         /// <summary>
