@@ -22,6 +22,7 @@
 //  THE SOFTWARE.
 //  ---------------------------------------------------------------------------------
 
+using NetworkHelper;
 using Windows.UI.Xaml.Controls;
 
 namespace QuizGameClient
@@ -33,8 +34,11 @@ namespace QuizGameClient
             this.InitializeComponent();
         }
 
-        private void OnCreateGameClicked(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void OnCreateGameClicked(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
+            var participant = new DnssdParticipant();
+            await participant.FindAllDevicesAsync();
+
             this.Frame.Navigate(typeof(QuizGame.GamePage));
         }
 
