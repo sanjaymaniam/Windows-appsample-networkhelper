@@ -170,14 +170,57 @@ namespace NetworkHelper
         {
             var query = "System.Devices.AepService.ProtocolId:={4526e8c1-8aac-4153-9b16-55e86ada0e54} AND System.Devices.Dnssd.Domain:=\"local\" AND System.Devices.Dnssd.ServiceName:=\"_ipp._tcp\"";
             DeviceInformationCollection devices = await DeviceInformation.FindAllAsync(query, _propertyKeys, DeviceInformationKind.AssociationEndpointService);
+            int deviceCount = 0;
 
-            int count = 0;
-            var devicesList = devices.ToList();
             foreach (var device in devices)
             {
-                count++;
+                var properties = device.Properties;
+
+                if (properties.TryGetValue("System.Devices.AepService.ContainerId", out object containerId))
+                {
+                    Debug.WriteLine($"System.Devices.AepService.ContainerId: {containerId}");
+                }
+
+                if (properties.TryGetValue("System.Devices.Icon", out object icon))
+                {
+                    Debug.WriteLine($"System.Devices.Icon: {icon}");
+                }
+
+                if (properties.TryGetValue("System.Devices.GlyphIcon", out object glyphIcon))
+                {
+                    Debug.WriteLine($"System.Devices.GlyphIcon: {glyphIcon}");
+                }
+
+                if (properties.TryGetValue("System.Devices.Dnssd.HostName", out object hostName))
+                {
+                    Debug.WriteLine($"System.Devices.Dnssd.HostName: {hostName}");
+                }
+
+                if (properties.TryGetValue("System.Devices.Dnssd.ServiceName", out object serviceName))
+                {
+                    Debug.WriteLine($"System.Devices.Dnssd.ServiceName: {serviceName}");
+                }
+
+                if (properties.TryGetValue("System.Devices.Dnssd.InstanceName", out object instanceName))
+                {
+                    Debug.WriteLine($"System.Devices.Dnssd.InstanceName: {instanceName}");
+                }
+
+                if (properties.TryGetValue("System.Devices.IpAddress", out object ipAddressObj) && ipAddressObj is string[] ipAddresses)
+                {
+                    Debug.WriteLine($"System.Devices.IpAddress: {string.Join(", ", ipAddresses)}");
+                }
             }
-            Debug.WriteLine("found {0} devices", count);
+            Debug.WriteLine("found {0} devices", deviceCount);
+            // Sample output:
+            // found 1 devices
+            // System.Devices.AepService.ContainerId: 77fc680a - 1642 - 528c - 827a - 339607814d13
+            // System.Devices.Icon: 
+            // System.Devices.GlyphIcon: 
+            // System.Devices.Dnssd.HostName: sanjay - ubuntuserver.local
+            // System.Devices.Dnssd.ServiceName: _ipp._tcp
+            // System.Devices.Dnssd.InstanceName: Test Printer on sanjay-ubuntuserver
+            // System.Devices.IpAddress: 192.168.0.113, 2406:7400:bd: 3abd: 9ccb: dff: fed4: 6e66
         }
 
         /// <summary>
