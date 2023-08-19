@@ -146,7 +146,6 @@ namespace NetworkHelper
         /// </summary>
         public override async Task<bool> StartListeningAsync()
         {
-            await FindAllDevicesAsync();
             bool status = false;
 
             if (_watcher == null)
